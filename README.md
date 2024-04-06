@@ -1,3 +1,4 @@
+`brew install redis`
 `bundle`
 `yarn`
 `gem install foreman`

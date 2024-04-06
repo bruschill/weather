@@ -16,10 +16,10 @@ class OpenWeatherMapAPI
   end
 
   def current_weather(postal_code)
-    cache_exists = false
+    cached_data = Rails.cache.read(postal_code)
 
-    if cache_exists
-      # return cache data for postal code
+    if cached_data.present?
+      cached_data
     else
       lat, lon = geocode_by_postal_code(postal_code)
       params = {
@@ -33,7 +33,7 @@ class OpenWeatherMapAPI
         end
 
         data_to_cache = parse_response_body(response.body)
-        cache_postal_code_data(postal_code, data_to_cache)
+        cache_current_weather_data(postal_code, data_to_cache)
 
         data_to_cache
       rescue Faraday::UnauthorizedError => e
@@ -70,7 +70,7 @@ class OpenWeatherMapAPI
         # need to parse a different way, as data needed is in response.body["list"]
         # data is every three hours starting at 03:00 the day after present day
         data_to_cache = parse_response_body(response.body)
-        cache_postal_code_data(postal_code, data_to_cache)
+        cache_current_forecast_data(postal_code, data_to_cache)
 
         data_to_cache
       rescue Faraday::UnauthorizedError => e
@@ -122,8 +122,16 @@ class OpenWeatherMapAPI
     data
   end
 
-  def cache_postal_code_data(_postal_code, _data)
+  def cache_current_weather_data(postal_code, data)
     # cache weather data, return true if it worked, false if it failed
-    true
+    val = Rails.cache.write(postal_code, data)
+    puts val
+    val
+  end
+
+  def cache_current_forecast_data(postal_code, data)
+    val = Rails.cache.write(postal_code, data)
+    puts val
+    val
   end
 end
