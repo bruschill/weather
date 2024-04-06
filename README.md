@@ -1,3 +1,5 @@
+`bundle`
+`yarn`
 `gem install foreman`
 `foreman start`
-`localhost:3000`
+`localhost:5000`
