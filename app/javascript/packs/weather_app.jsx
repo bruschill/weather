@@ -1,19 +1,21 @@
-import React from 'react'
-import ReactDOM from 'react-dom'
-import PropTypes from 'prop-types'
+import React from 'react';
+import ReactDOM from 'react-dom';
+import "./weather_app.css";
 
 // const GOOGLE_PLACES_API_KEY = process.env.GOOGLE_PLACES_API_KEY
 
 const WeatherApp = () => {
   return (
-    <h1>Weather</h1>
+    <div className="container">
+      <div></div>
+
+      <div>
+        <h1>Weather</h1>
+      </div>
+
+      <div></div>
+    </div>
   );
-}
-
-WeatherApp.defaultProps = {
-}
-
-WeatherApp.propTypes = {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
