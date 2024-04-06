@@ -1,1 +1,1 @@
-# Webpacker::Compiler.env['OPEN_WEATHER_MAP_API_KEY'] = Rails.application.credentials.open_weather_map_api_key
+Webpacker::Compiler.env['GOOGLE_PLACES_API_KEY'] = Rails.application.credentials.google_places_api_key
