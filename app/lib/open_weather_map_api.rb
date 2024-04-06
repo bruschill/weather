@@ -11,6 +11,7 @@ class OpenWeatherMapAPI
     @conn = Faraday.new(BASE_URL) do |builder|
       builder.params = default_request_params
       builder.response :json
+      builder.response :raise_error
     end
   end
 
@@ -26,14 +27,26 @@ class OpenWeatherMapAPI
         lon: lon,
       }
 
-      response = @conn.get("data/2.5/weather") do |request|
-        request.params = params.merge(request.params)
+      begin
+        response = @conn.get("data/2.5/weather") do |request|
+          request.params = params.merge(request.params)
+        end
+
+        data_to_cache = parse_response_body(response.body)
+        cache_postal_code_data(postal_code, data_to_cache)
+
+        data_to_cache
+      rescue Faraday::UnauthorizedError => e
+        # 401, some kind of misconfiguration like wrong API key
+      rescue Faraday::ResourceNotFound => e
+        # 404, most likely a non-US address
+      rescue Faraday::ClientError => e
+        if e.response_status == 429
+          # too many requests per minute
+        else
+          # site down or some other critical error we're not prepared to handle
+        end
       end
-
-      data_to_cache = parse_response_body(response.body)
-      cache_postal_code_data(postal_code, data_to_cache)
-
-      data_to_cache
     end
   end
 
@@ -49,16 +62,28 @@ class OpenWeatherMapAPI
         lon: lon,
       }
 
-      response = @conn.get("data/2.5/forecast") do |request|
-        request.params = params.merge(request.params)
+      begin
+        response = @conn.get("data/2.5/forecast") do |request|
+          request.params = params.merge(request.params)
+        end
+
+        # need to parse a different way, as data needed is in response.body["list"]
+        # data is every three hours starting at 03:00 the day after present day
+        data_to_cache = parse_response_body(response.body)
+        cache_postal_code_data(postal_code, data_to_cache)
+
+        data_to_cache
+      rescue Faraday::UnauthorizedError => e
+        # 401, some kind of misconfiguration like wrong API key
+      rescue Faraday::ResourceNotFound => e
+        # 404, most likely a non-US address
+      rescue Faraday::ClientError => e
+        if e.response_status == 429
+          # too many requests per minute
+        else
+          # site down or some other critical error we're not prepared to handle
+        end
       end
-
-      # need to parse a different way, as data needed is in response.body["list"]
-      # data is every three hours starting at 03:00 the day after present day
-      data_to_cache = parse_response_body(response.body)
-      cache_postal_code_data(postal_code, data_to_cache)
-
-      data_to_cache
     end
   end
 
@@ -69,18 +94,31 @@ class OpenWeatherMapAPI
       zip: "#{postal_code},US",
     }
 
-    response = @conn.get("geo/1.0/zip") do |request|
-      request.params = params.merge(request.params)
+    begin
+      response = @conn.get("geo/1.0/zip") do |request|
+        request.params = params.merge(request.params)
+      end
+
+      data = response.body
+
+      [data["lat"], data["lon"]]
+    rescue Faraday::UnauthorizedError => e
+      # 401, some kind of misconfiguration like wrong API key
+    rescue Faraday::ResourceNotFound => e
+      # 404, most likely a non-US address
+    rescue Faraday::ClientError => e
+      if e.response_status == 429
+        # too many requests per minute
+      else
+        # site down or some other critical error we're not prepared to handle
+      end
     end
-
-    data = response.body
-
-    [data["lat"], data["lon"]]
   end
 
   def parse_response_body(data)
     # collect only necessary fields here
     # duplicate fahrenheit fields in celsius
+    # respond with { data: { fields: 'that', we: 'need'}}
     data
   end
 
