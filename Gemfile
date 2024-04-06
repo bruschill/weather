@@ -12,6 +12,7 @@ gem 'jbuilder', '~> 2.7'
 
 gem 'faraday'
 gem 'redis'
+gem 'redis-rails'
 
 gem 'bootsnap', '>= 1.4.4', require: false
 
