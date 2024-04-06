@@ -4,7 +4,8 @@ class OpenWeatherMapAPI
 
   def initialize
     default_request_params = {
-      appid: API_KEY
+      appid: API_KEY,
+      units: 'imperial'
     }
 
     @conn = Faraday.new(BASE_URL) do |builder|
@@ -36,6 +37,31 @@ class OpenWeatherMapAPI
     end
   end
 
+  def five_day_forecast(postal_code)
+    cache_exists = false
+
+    if cache_exists
+      # return cache data for postal code
+    else
+      lat, lon = geocode_by_postal_code(postal_code)
+      params = {
+        lat: lat,
+        lon: lon,
+      }
+
+      response = @conn.get("data/2.5/forecast") do |request|
+        request.params = params.merge(request.params)
+      end
+
+      # need to parse a different way, as data needed is in response.body["list"]
+      # data is every three hours starting at 03:00 the day after present day
+      data_to_cache = parse_response_body(response.body)
+      cache_postal_code_data(postal_code, data_to_cache)
+
+      data_to_cache
+    end
+  end
+
   private
 
   def geocode_by_postal_code(postal_code)
@@ -54,6 +80,7 @@ class OpenWeatherMapAPI
 
   def parse_response_body(data)
     # collect only necessary fields here
+    # duplicate fahrenheit fields in celsius
     data
   end
 
