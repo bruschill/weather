@@ -1,5 +1,3 @@
-require_relative "util"
-
 module OpenWeatherMap
   class API
     API_KEY = Rails.application.credentials[:open_weather_map_api_key]
@@ -70,6 +68,5 @@ module OpenWeatherMap
         end
       end
     end
-
   end
 end
