@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-  root 'weather#show'
+  root 'static_pages#show'
 
-  resource :weather, only: [:show]
+  resource :weather, controller: 'weather', only: [:show]
 end
