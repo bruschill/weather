@@ -25,7 +25,7 @@ export const CurrentWeather = () => {
           {currentConditions}
         </div>
         <div className="feels-like-temperature">
-          feels like {temperatureData["temp"]}°
+          Feels like {temperatureData["temp"]}°
         </div>
         <div className="high-low-temperature">
           H:{temperatureData["temp_max"]}° L:{temperatureData["temp_min"]}°
