@@ -18,53 +18,7 @@ class OpenWeatherMapAPI
   end
 
   def weather(postal_code)
-    {
-      data: {
-        current: current_weather(postal_code),
-        forecast: five_day_forecast(postal_code)
-      }
-    }
-  end
-
-  private
-
-  def current_weather(postal_code)
-    cached_data = Rails.cache.read("#{postal_code}/current")
-
-    if cached_data.present?
-      cached_data.merge({metadata: { cached: true}})
-    else
-      lat, lon = geocode_by_postal_code(postal_code)
-      params = {
-        lat: lat,
-        lon: lon,
-      }
-
-      begin
-        response = @conn.get("data/2.5/weather") do |request|
-          request.params = params.merge(request.params)
-        end
-
-        data_to_cache = parse_current_weather_response_data(response.body)
-        cache_current_weather_data(postal_code, data_to_cache)
-
-        data_to_cache
-      rescue Faraday::UnauthorizedError => e
-        # 401, some kind of misconfiguration like wrong API key
-      rescue Faraday::ResourceNotFound => e
-        # 404, most likely a non-US address
-      rescue Faraday::ClientError => e
-        if e.response_status == 429
-          # too many requests per minute
-        else
-          # site down or some other critical error we're not prepared to handle
-        end
-      end
-    end
-  end
-
-  def five_day_forecast(postal_code)
-    cached_data = Rails.cache.read("#{postal_code}/forecast")
+    cached_data = Rails.cache.read(postal_code)
 
     if cached_data.present?
       cached_data.merge({ metadata: { cached: true } })
@@ -76,14 +30,32 @@ class OpenWeatherMapAPI
       }
 
       begin
+        # current weather request
+        response = @conn.get("data/2.5/weather") do |request|
+          request.params = params.merge(request.params)
+        end
+
+        current_weather_data = parse_current_weather_response_data(response.body)
+        location_name = response.body["name"]
+
+        # forecast request
         response = @conn.get("data/2.5/forecast") do |request|
           request.params = params.merge(request.params)
         end
 
-        data_to_cache = parse_forecast_response_data(response.body)
-        cache_current_forecast_data(postal_code, data_to_cache)
+        forecast_data = parse_forecast_response_data(response.body)
 
-        data_to_cache
+        data_to_cache = {
+          data: {
+            location: location_name,
+            current: current_weather_data,
+            forecast: forecast_data
+          }
+        }
+
+        Rails.cache.write(postal_code, data_to_cache, expires_in: WEATHER_DATA_EXPIRATION)
+
+        data_to_cache.merge({ metadata: { cached: false } })
       rescue Faraday::UnauthorizedError => e
         # 401, some kind of misconfiguration like wrong API key
       rescue Faraday::ResourceNotFound => e
@@ -97,6 +69,8 @@ class OpenWeatherMapAPI
       end
     end
   end
+
+  private
 
   def geocode_by_postal_code(postal_code)
     cached_data = Rails.cache.read("#{postal_code}/geocode")
@@ -133,41 +107,32 @@ class OpenWeatherMapAPI
   end
 
   def parse_current_weather_response_data(data)
-    location_name = data["name"]
-    environment_data = data["main"].select { |key, value| key.in?(%W[humidity pressure]) }
-    fahrenheit_temperature_data = data["main"].select { |key, value| key.in?(%W[temp temp_min temp_max feels_like]) }
-    celsius_temperature_data = fahrenheit_temperature_data.each_with_object({}) do |(key, value), hash|
-      hash[key] = ((value.to_f - 32) * 5/9).round(2)
-    end
+    environment_data = data["main"].select { |key, _value| key.in?(%W[humidity pressure]) }
+    fahrenheit_temperature_data = data["main"].select { |key, _value| key.in?(%W[temp temp_min temp_max feels_like]) }
+    celsius_temperature_data = convert_fahrenheit_temperature_data_to_celsius(fahrenheit_temperature_data)
     wind_data = data["wind"]
     current_conditions_data = data["weather"][0]["main"]
     timestamp = Time.at(data["dt"])
 
     {
-      data: {
-        timestamp: timestamp,
-        location_name: location_name,
-        environment: environment_data,
-        temperature: {
-          fahrenheit: fahrenheit_temperature_data,
-          celsius: celsius_temperature_data
-        },
-        wind: wind_data,
-        current_conditions: current_conditions_data
-      }
+      timestamp: timestamp,
+      environment: environment_data,
+      temperature: {
+        fahrenheit: fahrenheit_temperature_data,
+        celsius: celsius_temperature_data
+      },
+      wind: wind_data,
+      current_conditions: current_conditions_data
     }
   end
 
   def parse_forecast_response_data(data)
-    location_name = data["city"]["name"]
     five_day_forecast = data["list"]
 
     parsed_forecast = five_day_forecast.map do |forecast_interval|
       environment_data = forecast_interval["main"].select { |key, _value| key.in?(%W[humidity pressure]) }
       fahrenheit_temperature_data = forecast_interval["main"].select { |key, _value| key.in?(%W[temp_min temp_max]) }
-      celsius_temperature_data = fahrenheit_temperature_data.each_with_object({}) do |(key, value), hash|
-        hash[key] = ((value.to_f - 32) * 5 / 9).round(2)
-      end
+      celsius_temperature_data = convert_fahrenheit_temperature_data_to_celsius(fahrenheit_temperature_data)
       wind_data = forecast_interval["wind"]
       timestamp = forecast_interval["dt_txt"]
 
@@ -183,20 +148,13 @@ class OpenWeatherMapAPI
     end
 
     {
-      data: {
-        location_name: location_name,
-        forecast: parsed_forecast
-      }
+      forecast: parsed_forecast
     }
   end
 
-  def cache_current_weather_data(postal_code, data)
-    cache_key = "#{postal_code}/current"
-    Rails.cache.write(cache_key, data, expires_in: WEATHER_DATA_EXPIRATION)
-  end
-
-  def cache_current_forecast_data(postal_code, data)
-    cache_key = "#{postal_code}/forecast"
-    Rails.cache.write(cache_key, data, expires_in: WEATHER_DATA_EXPIRATION)
+  def convert_fahrenheit_temperature_data_to_celsius(data)
+    data.each_with_object({}) do |(key, value), hash|
+      hash[key] = ((value.to_f - 32) * 5 / 9).round(2)
+    end
   end
 end
