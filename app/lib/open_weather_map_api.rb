@@ -1,13 +1,13 @@
 class OpenWeatherMapAPI
   API_KEY = Rails.application.credentials[:open_weather_map_api_key]
-  BASE_URL = 'https://api.openweathermap.org'.freeze
+  BASE_URL = "https://api.openweathermap.org".freeze
   WEATHER_DATA_EXPIRATION = 5.seconds
   GEOCODE_DATA_EXPIRATION = 1.month
 
   def initialize
     default_request_params = {
       appid: API_KEY,
-      units: 'imperial'
+      units: "imperial"
     }
 
     @conn = Faraday.new(BASE_URL) do |builder|
@@ -21,12 +21,12 @@ class OpenWeatherMapAPI
     cached_data = Rails.cache.read(postal_code)
 
     if cached_data.present?
-      cached_data.merge({ metadata: { cached: true } })
+      cached_data.merge({metadata: {cached: true}})
     else
       lat, lon = geocode_by_postal_code(postal_code)
       params = {
         lat: lat,
-        lon: lon,
+        lon: lon
       }
 
       begin
@@ -55,7 +55,7 @@ class OpenWeatherMapAPI
 
         Rails.cache.write(postal_code, data_to_cache, expires_in: WEATHER_DATA_EXPIRATION)
 
-        data_to_cache.merge({ metadata: { cached: false } })
+        data_to_cache.merge({metadata: {cached: false}})
       rescue Faraday::UnauthorizedError => e
         # 401, some kind of misconfiguration like wrong API key
       rescue Faraday::ResourceNotFound => e
@@ -147,10 +147,10 @@ class OpenWeatherMapAPI
       date = Date.parse(key)
 
       day_name = if date.today?
-                   "Today"
-                 else
-                   Date.parse(key).strftime("%A")
-                 end
+        "Today"
+      else
+        Date.parse(key).strftime("%A")
+      end
 
       hash[key] = {
         day_name: day_name,
@@ -161,7 +161,7 @@ class OpenWeatherMapAPI
         celsius: {
           temp_min: convert_fahrenheit_to_celsius(min_temp),
           temp_max: convert_fahrenheit_to_celsius(max_temp)
-        },
+        }
       }
     end
   end
