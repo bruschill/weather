@@ -40,10 +40,10 @@ module OpenWeatherMap
         date = Date.parse(key)
 
         day_name = if date.today?
-                     "Today"
-                   else
-                     Date.parse(key).strftime("%A")
-                   end
+          "Today"
+        else
+          Date.parse(key).strftime("%A")
+        end
 
         hash[key] = {
           day_name: day_name,
@@ -58,6 +58,5 @@ module OpenWeatherMap
         }
       end
     end
-
   end
 end
