@@ -5,7 +5,7 @@ import { useAppState } from './context_providers/AppState'
 import { useLoadingState } from './context_providers/LoadingState'
 
 export const AddressInput = () => {
-  const [loadingState, setLoadingState] = useLoadingState()
+  const [_loadingState, setLoadingState] = useLoadingState()
   const [_state, setState] = useAppState()
   const [address, setAddress] = useState(null)
   const {
