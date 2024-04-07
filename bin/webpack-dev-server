@@ -13,9 +13,6 @@ require "webpacker"
 require "webpacker/dev_server_runner"
 
 require_relative '../config/environment'
-# or
-# require_relative '../config/application'
-# Rails.application.initialize!
 
 APP_ROOT = File.expand_path("..", __dir__)
 Dir.chdir(APP_ROOT) do

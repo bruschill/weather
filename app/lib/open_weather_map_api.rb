@@ -17,6 +17,17 @@ class OpenWeatherMapAPI
     end
   end
 
+  def weather(postal_code)
+    {
+      data: {
+        current: current_weather(postal_code),
+        forecast: five_day_forecast(postal_code)
+      }
+    }
+  end
+
+  private
+
   def current_weather(postal_code)
     cached_data = Rails.cache.read("#{postal_code}/current")
 
@@ -69,8 +80,6 @@ class OpenWeatherMapAPI
           request.params = params.merge(request.params)
         end
 
-        # need to parse a different way, as data needed is in response.body["list"]
-        # data is every three hours starting at 03:00 the day after present day
         data_to_cache = parse_forecast_response_data(response.body)
         cache_current_forecast_data(postal_code, data_to_cache)
 
@@ -88,8 +97,6 @@ class OpenWeatherMapAPI
       end
     end
   end
-
-  private
 
   def geocode_by_postal_code(postal_code)
     cached_data = Rails.cache.read("#{postal_code}/geocode")
@@ -134,10 +141,11 @@ class OpenWeatherMapAPI
     end
     wind_data = data["wind"]
     current_conditions_data = data["weather"][0]["main"]
+    timestamp = Time.at(data["dt"])
 
     {
       data: {
-        timestamp: data["dt_txt"],
+        timestamp: timestamp,
         location_name: location_name,
         environment: environment_data,
         temperature: {

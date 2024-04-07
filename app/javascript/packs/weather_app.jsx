@@ -43,10 +43,10 @@ const AddressInput = () => {
     }
 
     if (address) {
-      console.log(address)
       fetch(`/weather?q=${address}`, requestOptions)
         .then((response) => response.json())
         .then((data) => {
+          // this is the data blob we end up using to render content
           console.log(data)
         })
         .catch((error) => console.log(error));
