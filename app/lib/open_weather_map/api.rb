@@ -1,8 +1,13 @@
+require_relative "response_parser"
+require_relative "util"
+
 module OpenWeatherMap
   class API
     API_KEY = Rails.application.credentials[:open_weather_map_api_key]
     BASE_URL = "https://api.openweathermap.org".freeze
     WEATHER_DATA_EXPIRATION = 5.seconds
+    GEOCODE_DATA_EXPIRATION = 1.month
+
     def initialize
       default_request_params = {
         appid: API_KEY,
@@ -22,7 +27,7 @@ module OpenWeatherMap
       if cached_data.present?
         cached_data.merge({metadata: {cached: true}})
       else
-        lat, lon = OpenWeatherMap::Geocoder.geocode_by_postal_code(postal_code)
+        lat, lon = geocode_by_postal_code(postal_code)
         params = {
           lat: lat,
           lon: lon
@@ -55,6 +60,40 @@ module OpenWeatherMap
           Rails.cache.write(postal_code, data_to_cache, expires_in: WEATHER_DATA_EXPIRATION)
 
           data_to_cache.merge({metadata: {cached: false}})
+        rescue Faraday::UnauthorizedError => e
+          # 401, some kind of misconfiguration like wrong API key
+        rescue Faraday::ResourceNotFound => e
+          # 404, most likely a non-US address
+        rescue Faraday::ClientError => e
+          if e.response_status == 429
+            # too many requests per minute
+          else
+            # site down or some other critical error we're not prepared to handle
+          end
+        end
+      end
+    end
+
+    def geocode_by_postal_code(postal_code)
+      cached_data = Rails.cache.read("#{postal_code}/geocode")
+
+      if cached_data
+        [cached_data["lat"], cached_data["lon"]]
+      else
+        params = {
+          zip: "#{postal_code},US"
+        }
+
+        begin
+          response = @conn.get("geo/1.0/zip") do |request|
+            request.params = params.merge(request.params)
+          end
+
+          data = response.body
+          cache_key = "#{postal_code}/geocode"
+          Rails.cache.write(cache_key, data, expires_in: GEOCODE_DATA_EXPIRATION)
+
+          [data["lat"], data["lon"]]
         rescue Faraday::UnauthorizedError => e
           # 401, some kind of misconfiguration like wrong API key
         rescue Faraday::ResourceNotFound => e

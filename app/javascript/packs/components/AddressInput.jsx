@@ -40,10 +40,6 @@ export const AddressInput = () => {
     }
   }, [address])
 
-  useEffect(() => {
-    // console.log(loadingState)
-  }, [loadingState])
-
   const onSubmit = (data) => {
     setAddress(data.q)
     reset()
