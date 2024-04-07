@@ -11,7 +11,8 @@ export const AddressInput = () => {
   const {
     handleSubmit,
     formState: { errors },
-    register
+    register,
+    reset
   } = useForm({ defaultValues: address, mode: "onSubmit" });
 
   useEffect(() => {
@@ -42,6 +43,7 @@ export const AddressInput = () => {
 
   const onSubmit = (data) => {
     setAddress(data['q'])
+    reset();
   }
 
   return (

@@ -7,7 +7,7 @@ import { Header } from "./Header";
 export const FiveDayForecast = () => {
   const [state] = useAppState();
   const forecastData = state["forecast"]
-  console.log(forecastData);
+  // console.log(forecastData);
 
   return (
     <Header text="Five-day Forecast"/>

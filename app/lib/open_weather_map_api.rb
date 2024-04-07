@@ -107,6 +107,7 @@ class OpenWeatherMapAPI
   end
 
   def parse_current_weather_response_data(data)
+    location_name = data["location"]
     environment_data = data["main"].select { |key, _value| key.in?(%W[humidity pressure]) }
     fahrenheit_temperature_data = data["main"].select { |key, _value| key.in?(%W[temp temp_min temp_max feels_like]) }
     celsius_temperature_data = convert_fahrenheit_temperature_data_to_celsius(fahrenheit_temperature_data)
@@ -115,6 +116,7 @@ class OpenWeatherMapAPI
     timestamp = Time.at(data["dt"])
 
     {
+      location: location_name,
       timestamp: timestamp,
       environment: environment_data,
       temperature: {
@@ -127,6 +129,7 @@ class OpenWeatherMapAPI
   end
 
   def parse_forecast_response_data(data)
+    location_name = data["city"]["name"]
     five_day_forecast = data["list"]
 
     parsed_forecast = five_day_forecast.map do |forecast_interval|
@@ -137,6 +140,7 @@ class OpenWeatherMapAPI
       timestamp = forecast_interval["dt_txt"]
 
       {
+        location: location_name,
         environment: environment_data,
         temperature: {
           fahrenheit: fahrenheit_temperature_data,
