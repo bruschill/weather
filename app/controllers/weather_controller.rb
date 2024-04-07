@@ -1,6 +1,6 @@
 class WeatherController < ApplicationController
   def show
-    owm = OpenWeatherMapAPI.new
+    owm = OpenWeatherMap::API.new
 
     # parse zip out of params[:q] to the best of my ability
     parsed_address = StreetAddress::US.parse(params[:q])
