@@ -1,20 +1,25 @@
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useState } from 'react'
+import PropTypes from 'prop-types'
 
-export const AppStateContext = createContext({});
+export const AppStateContext = createContext({})
 
-export function AppProvider({ children }) {
-  const value = useState({});
+export function AppProvider ({ children }) {
+  const value = useState({})
   return (
     <AppStateContext.Provider value={value}>
       {children}
     </AppStateContext.Provider>
-  );
+  )
 }
 
-export function useAppState() {
-  const context = useContext(AppStateContext);
+export function useAppState () {
+  const context = useContext(AppStateContext)
   if (!context) {
-    throw new Error("useAppState must be used within the AppProvider");
+    throw new Error('useAppState must be used within the AppProvider')
   }
-  return context;
+  return context
+}
+
+AppProvider.propTypes = {
+  children: PropTypes.node
 }

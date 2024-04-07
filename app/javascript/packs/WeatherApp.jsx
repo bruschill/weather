@@ -1,14 +1,14 @@
-import React from 'react';
+import React from 'react'
 
-import { AppProvider } from "./components/context_providers/AppState";
-import { LoadingProvider } from "./components/context_providers/LoadingState";
+import { AppProvider } from './components/context_providers/AppState'
+import { LoadingProvider } from './components/context_providers/LoadingState'
 
-import { Header } from "./components/Header";
-import { AddressInput } from "./components/AddressInput";
-import { WeatherBox } from "./components/WeatherBox";
+import { Header } from './components/Header'
+import { AddressInput } from './components/AddressInput'
+import { WeatherBox } from './components/WeatherBox'
 
-import "./weather_app.css";
-import { createRoot } from "react-dom/client";
+import './weather_app.css'
+import { createRoot } from 'react-dom/client'
 
 const WeatherApp = () => {
   return (
@@ -27,7 +27,7 @@ const WeatherApp = () => {
 
       <div></div>
     </div>
-  );
+  )
 }
 
 document.addEventListener('DOMContentLoaded', () => {
