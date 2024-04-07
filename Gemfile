@@ -10,12 +10,16 @@ gem "webpacker", "~> 5.0"
 gem "turbolinks", "~> 5"
 gem "jbuilder", "~> 2.7"
 
-gem "faraday"
+gem "bootsnap", ">= 1.4.4", require: false
+
+gem "rack-cors"
+
 gem "redis"
 gem "redis-rails"
-gem "StreetAddress", require: "street_address"
 
-gem "bootsnap", ">= 1.4.4", require: false
+gem "faraday"
+
+gem "StreetAddress", require: "street_address"
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
