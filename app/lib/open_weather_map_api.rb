@@ -70,8 +70,6 @@ class OpenWeatherMapAPI
     end
   end
 
-  private
-
   def geocode_by_postal_code(postal_code)
     cached_data = Rails.cache.read("#{postal_code}/geocode")
 
@@ -132,33 +130,49 @@ class OpenWeatherMapAPI
     location_name = data["city"]["name"]
     five_day_forecast = data["list"]
 
-    parsed_forecast = five_day_forecast.map do |forecast_interval|
-      environment_data = forecast_interval["main"].select { |key, _value| key.in?(%W[humidity pressure]) }
-      fahrenheit_temperature_data = forecast_interval["main"].select { |key, _value| key.in?(%W[temp_min temp_max]) }
-      celsius_temperature_data = convert_fahrenheit_temperature_data_to_celsius(fahrenheit_temperature_data)
-      wind_data = forecast_interval["wind"]
-      timestamp = forecast_interval["dt_txt"]
-
-      {
-        location: location_name,
-        environment: environment_data,
-        temperature: {
-          fahrenheit: fahrenheit_temperature_data,
-          celsius: celsius_temperature_data
-        },
-        wind: wind_data,
-        timestamp: timestamp
+    preprocessed_five_day_forecast = five_day_forecast.each_with_object(Hash.new { |hash, key| hash[key] = [] }) do |forecast_interval, hash|
+      # iterating by interval
+      date = Date.parse(forecast_interval["dt_txt"])
+      min_max_temp_hash = {
+        temp_min: forecast_interval["main"]["temp_min"],
+        temp_max: forecast_interval["main"]["temp_max"]
       }
+
+      hash[date.to_s] << min_max_temp_hash
     end
 
-    {
-      forecast: parsed_forecast
-    }
+    preprocessed_five_day_forecast.each_with_object({}) do |(key, value), hash|
+      min_temp = value.map { |v| v[:temp_min] }.min
+      max_temp = value.map { |v| v[:temp_max] }.max
+      date = Date.parse(key)
+
+      day_name = if date.today?
+                   "Today"
+                 else
+                   Date.parse(key).strftime("%A")
+                 end
+
+      hash[key] = {
+        day_name: day_name,
+        fahrenheit: {
+          temp_min: min_temp,
+          temp_max: max_temp
+        },
+        celsius: {
+          temp_min: convert_fahrenheit_to_celsius(min_temp),
+          temp_max: convert_fahrenheit_to_celsius(max_temp)
+        },
+      }
+    end
   end
 
   def convert_fahrenheit_temperature_data_to_celsius(data)
     data.each_with_object({}) do |(key, value), hash|
-      hash[key] = ((value.to_f - 32) * 5 / 9).round(2)
+      hash[key] = convert_fahrenheit_to_celsius(value)
     end
+  end
+
+  def convert_fahrenheit_to_celsius(fahrenheit_temp)
+    ((fahrenheit_temp.to_f - 32) * 5 / 9).round(2)
   end
 end
