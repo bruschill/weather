@@ -3,7 +3,7 @@
   "private": true,
   "license": "unlicense",
   "scripts": {
-    "lint": "yarn run eslint app/javascript/packs --fix"
+    "lint": "yarn run eslint app/javascript/packs --fix; rake standard:fix"
   },
   "dependencies": {
     "@babel/preset-react": "^7.24.1",

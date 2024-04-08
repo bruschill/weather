@@ -2,7 +2,7 @@
 #### System requirements
 - `Ruby 3.3.0`
 - `Redis v7.2.4`
-    - using [Homebrew](https://brew.sh/), `brew install redis` should do the trick
+    - using [Homebrew](https://brew.sh/), `brew install redis`
 
 #### Install dependencies
 1. `bundle`
@@ -17,6 +17,11 @@
 
 #### Running tests
 - `bin/rails test`
+
+#### Running linters
+- `yarn lint`, which runs 
+    - `yarn run eslint app/javascript/packs --fix`
+    - `rake standard:fix`
 
 #### Troubleshooting
 - Redis
