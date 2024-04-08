@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
+import { ErrorMessage } from '@hookform/error-message'
 
 import { useAppState } from './context_providers/AppState'
 import { useLoadingState } from './context_providers/LoadingState'
@@ -13,13 +14,15 @@ export const AddressInput = () => {
   const [unitState, setUnitState] = useUnitState()
   const [address, setAddress] = useState(null)
   const {
+    clearErrors,
     handleSubmit,
     formState: { errors },
     register,
     reset
   } = useForm({
     defaultValues: address,
-    mode: 'onSubmit'
+    mode: "onSubmit",
+    reValidateMode: "onSubmit",
   })
 
   useEffect(() => {
@@ -59,17 +62,32 @@ export const AddressInput = () => {
     }
   }
 
+  const addressInputOnClick = (e) => {
+    e.target.value = ''
+    clearErrors('q')
+  }
+
   return (
     <div>
       <form onSubmit={handleSubmit(onSubmit)}>
         <input
-          {...register('q')}
+          {...register('q', {
+            pattern: {
+              value: /\b(\d{5})\b(?!.*\b\d{5}\b)/,
+              message: 'Bad address'
+            }
+          })}
           type="text"
           id="q"
           name="q"
           placeholder="Enter your address"
+          onClick={addressInputOnClick}
         />
         <UnitToggle onChange={handleUnitChange} value={unitState}/>
+        <input type="submit"/>
+        <div>
+          <ErrorMessage errors={errors} name="q"/>
+        </div>
       </form>
     </div>
   )

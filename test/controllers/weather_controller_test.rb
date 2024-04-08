@@ -35,7 +35,7 @@ class WeatherControllerTest < ActionDispatch::IntegrationTest
 
     VCR.use_cassette("request_without_postal_code") do
       expected_response = {
-        "error" => OpenWeatherMap::API::GENERIC_ERROR_MESSAGE
+        "error" => OpenWeatherMap::API::BAD_ADDRESS_ERROR_MESSAGE
       }
       get weather_path, params: { q: address_with_no_postal_code }, as: :json
 
