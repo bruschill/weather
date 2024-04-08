@@ -81,6 +81,7 @@ module OpenWeatherMap
     # @param [Integer] postal_code
     # @return [Hash]
     def weather(postal_code)
+
       cached_data = Rails.cache.read(postal_code)
 
       if cached_data.present?
@@ -134,6 +135,28 @@ module OpenWeatherMap
       end
     end
 
+    # Requests current weather and forecast data for a particular zipcode
+    #
+    # The process flow is as follows:
+    # - load cached geocode data
+    # - if geocode data is present
+    #   - return it
+    # - else
+    #   - query API for geocode data
+    #   - build geocode data hash to cache
+    #   - cache geocode data hash
+    #   - return geocode data hash
+    #
+    # ====== Usage Example
+    # postal_code = 50322
+    #
+    # lat, lon = OpenWeatherMap::API.geocode_by_postal_code(postal_code)
+    #
+    # lat #=> 41.6295
+    # lon #=> -93.723
+    #
+    # @param [String] postal_code
+    # @return [Hash]
     def geocode_by_postal_code(postal_code)
       cached_data = Rails.cache.read("#{postal_code}/geocode")
 
