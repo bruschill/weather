@@ -8,6 +8,7 @@
 1. `bundle`
 2. `yarn`
 3. `gem install foreman`
+4. put provided `master.key` in `./config`
 
 #### Running the project
 - `foreman start`
