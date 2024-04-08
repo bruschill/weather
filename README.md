@@ -58,6 +58,7 @@
   - makes more specific unit testing easier
 - make `OpenWeatherMap::API, ...` methods have input validation
 - add styles
+- sanitize VCR cassettes so I don't accidentally leak a key again
 
 ### Bugs
 - loading spinner isn't displaying w/ state change
