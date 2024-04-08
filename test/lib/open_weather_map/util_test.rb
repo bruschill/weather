@@ -3,7 +3,7 @@ require "test_helper"
 describe "OpenWeatherMap::UtilTest" do
   describe "#convert_fahrenheit_temperature_data_to_celsius" do
     it "converts the hash's fields' values to celsius" do
-      hash_to_convert = { "temp" => 47, "feels_like" => 43, "temp_min" => 45, "temp_max" => 49 }
+      hash_to_convert = {"temp" => 47, "feels_like" => 43, "temp_min" => 45, "temp_max" => 49}
       converted_hash = OpenWeatherMap::Util.convert_fahrenheit_temperature_data_to_celsius(hash_to_convert)
 
       converted_hash.each do |key, value|

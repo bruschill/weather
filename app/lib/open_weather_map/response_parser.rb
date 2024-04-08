@@ -8,7 +8,7 @@ module OpenWeatherMap
       end
       celsius_temperature_data = OpenWeatherMap::Util.convert_fahrenheit_temperature_data_to_celsius(fahrenheit_temperature_data)
       current_conditions_data = data["weather"][0]["main"]
-      timestamp = Time.at(data["dt"])
+      timestamp = Time.at(data["dt"]).to_s
 
       {
         timestamp: timestamp,
