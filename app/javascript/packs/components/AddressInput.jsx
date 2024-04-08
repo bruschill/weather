@@ -21,8 +21,8 @@ export const AddressInput = () => {
     reset
   } = useForm({
     defaultValues: address,
-    mode: "onSubmit",
-    reValidateMode: "onSubmit",
+    mode: 'onSubmit',
+    reValidateMode: 'onSubmit'
   })
 
   useEffect(() => {

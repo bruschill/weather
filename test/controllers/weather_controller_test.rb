@@ -4,7 +4,7 @@ class WeatherControllerTest < ActionDispatch::IntegrationTest
   test "it works with just a valid postal code" do
     VCR.use_cassette("request_with_only_postal_code") do
       postal_code = "50322"
-      get weather_path, params: { q: postal_code }, as: :json
+      get weather_path, params: {q: postal_code}, as: :json
 
       location = "Urbandale"
       assert_equal(location, JSON.parse(response.body)["data"]["location"])
@@ -17,7 +17,7 @@ class WeatherControllerTest < ActionDispatch::IntegrationTest
         "error" => OpenWeatherMap::API::BAD_ADDRESS_ERROR_MESSAGE
       }
 
-      get weather_path, params: { q: "50322-1234" }, as: :json
+      get weather_path, params: {q: "50322-1234"}, as: :json
 
       assert_equal(expected_response, JSON.parse(response.body))
     end
@@ -30,7 +30,7 @@ class WeatherControllerTest < ActionDispatch::IntegrationTest
         "error" => OpenWeatherMap::API::BAD_ADDRESS_ERROR_MESSAGE
       }
 
-      get weather_path, params: { q: full_address }, as: :json
+      get weather_path, params: {q: full_address}, as: :json
 
       assert_equal(expected_response, JSON.parse(response.body))
     end
@@ -43,10 +43,9 @@ class WeatherControllerTest < ActionDispatch::IntegrationTest
       expected_response = {
         "error" => OpenWeatherMap::API::BAD_ADDRESS_ERROR_MESSAGE
       }
-      get weather_path, params: { q: address_with_no_postal_code }, as: :json
+      get weather_path, params: {q: address_with_no_postal_code}, as: :json
 
       assert_equal(expected_response, JSON.parse(response.body))
-
     end
   end
 end

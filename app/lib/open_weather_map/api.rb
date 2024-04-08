@@ -67,7 +67,7 @@ module OpenWeatherMap
           # log server config error
           {error: GENERIC_ERROR_MESSAGE}
         rescue Faraday::BadRequestError => e
-          { error: BAD_ADDRESS_ERROR_MESSAGE }
+          {error: BAD_ADDRESS_ERROR_MESSAGE}
         rescue Faraday::ResourceNotFound => e
           {error: BAD_ADDRESS_ERROR_MESSAGE}
         rescue Faraday::TooManyRequestsError => e
