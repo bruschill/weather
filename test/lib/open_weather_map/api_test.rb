@@ -1,6 +1,7 @@
 require "test_helper"
 
 describe "OpenWeatherMap::APITest" do
+  OpenWeatherMap::API::API_KEY = '2e5d50f1a643e6b13c89c7c485d51c05'
   describe "weather" do
     before do
       @owm = OpenWeatherMap::API.new

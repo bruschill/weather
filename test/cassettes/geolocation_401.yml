@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: https://api.openweathermap.org/geo/1.0/zip?appid=b88ab65e7d5a23cc8d7dfcd288440fe5&units=imperial&zip=50322%2CUS
+    uri: https://api.openweathermap.org/geo/1.0/zip?appid=2e5d50f1a643e6b13c89c7c485d51c05&units=imperial&zip=50322%2CUS
     body:
       encoding: US-ASCII
       string: ''

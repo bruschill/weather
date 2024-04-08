@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: https://api.openweathermap.org/geo/1.0/zip?appid=b88ab65e7d5a23cc8d7dfcd288440fe5&units=imperial&zip=50322%2CUS
+    uri: https://api.openweathermap.org/geo/1.0/zip?appid=2e5d50f1a643e6b13c89c7c485d51c05&units=imperial&zip=50322%2CUS
     body:
       encoding: US-ASCII
       string: ''
@@ -38,7 +38,7 @@ http_interactions:
   recorded_at: Mon, 08 Apr 2024 06:02:18 GMT
 - request:
     method: get
-    uri: https://api.openweathermap.org/data/2.5/weather?appid=b88ab65e7d5a23cc8d7dfcd288440fe5&lat=41.6295&lon=-93.723&units=imperial
+    uri: https://api.openweathermap.org/data/2.5/weather?appid=2e5d50f1a643e6b13c89c7c485d51c05&lat=41.6295&lon=-93.723&units=imperial
     body:
       encoding: US-ASCII
       string: ''
@@ -75,7 +75,7 @@ http_interactions:
   recorded_at: Mon, 08 Apr 2024 06:02:18 GMT
 - request:
     method: get
-    uri: https://api.openweathermap.org/data/2.5/forecast?appid=b88ab65e7d5a23cc8d7dfcd288440fe5&lat=41.6295&lon=-93.723&units=imperial
+    uri: https://api.openweathermap.org/data/2.5/forecast?appid=2e5d50f1a643e6b13c89c7c485d51c05&lat=41.6295&lon=-93.723&units=imperial
     body:
       encoding: US-ASCII
       string: ''
