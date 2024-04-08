@@ -155,7 +155,7 @@ module OpenWeatherMap
           Rails.cache.write(cache_key, data_to_cache, expires_in: GEOCODE_DATA_EXPIRATION)
 
           data_to_cache
-        rescue StandardError
+        rescue
           raise
         end
       end
