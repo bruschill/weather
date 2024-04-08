@@ -12,8 +12,11 @@ class WeatherController < ApplicationController
       # (?!.*\b\d{5}\b): Negative lookahead assertion to ensure that there are no more occurrences of a ZIP code pattern (\b\d{5}\b) ahead in the string.
       five_digit_postal_code_regex = /\b(\d{5})\b(?!.*\b\d{5}\b)/
 
-      matched_code = five_digit_postal_code_regex.match(params[:q])
-      matched_code.present? ? matched_code[0] : nil
+      matched_code = five_digit_postal_code_regex.match(params[:q]).to_a
+
+      # a clever/hacky way to handle if there is no match
+      # nil.to_i translates to 0 and is sent as postal code
+      matched_code[0].to_i
     end
 
     if postal_code.present?
