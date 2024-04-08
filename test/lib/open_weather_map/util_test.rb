@@ -15,9 +15,9 @@ describe "OpenWeatherMap::UtilTest" do
 
   describe "#convert_fahrenheit_to_celsius" do
     it "converts correctly" do
-      assert_equal(OpenWeatherMap::Util.convert_fahrenheit_to_celsius(0), -17.78)
+      assert_equal(OpenWeatherMap::Util.convert_fahrenheit_to_celsius(0), -18)
       assert_equal(OpenWeatherMap::Util.convert_fahrenheit_to_celsius(32), 0)
-      assert_equal(OpenWeatherMap::Util.convert_fahrenheit_to_celsius(100), 37.78)
+      assert_equal(OpenWeatherMap::Util.convert_fahrenheit_to_celsius(100), 38)
     end
   end
 end

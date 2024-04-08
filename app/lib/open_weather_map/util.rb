@@ -7,7 +7,7 @@ module OpenWeatherMap
     end
 
     def self.convert_fahrenheit_to_celsius(fahrenheit_temp)
-      ((fahrenheit_temp.to_f - 32) * 5 / 9).round(2)
+      ((fahrenheit_temp.to_f - 32) * 5 / 9).round
     end
   end
 end

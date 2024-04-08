@@ -7,7 +7,7 @@ describe "OpenWeatherMap::ResponseParserTest" do
     end
 
     it "parses correctly" do
-      expected_result = {timestamp: "2024-04-07 22:18:00 -0500", :temperature => {:fahrenheit => {"temp" => 54, "feels_like" => 53, "temp_min" => 52, "temp_max" => 58}, :celsius => {"temp" => 12.22, "feels_like" => 11.67, "temp_min" => 11.11, "temp_max" => 14.44}}, :current_conditions => "Clear"}
+      expected_result = { :timestamp => "2024-04-07 22:18:00 -0500", :temperature => { :fahrenheit => { "temp" => 54, "feels_like" => 53, "temp_min" => 52, "temp_max" => 58 }, :celsius => { "temp" => 12, "feels_like" => 12, "temp_min" => 11, "temp_max" => 14 } }, :current_conditions => "Clear" }
 
       parsed_result = OpenWeatherMap::ResponseParser.parse_current_weather_response_data(@raw_response)
       assert_equal(expected_result, parsed_result)
@@ -19,7 +19,7 @@ describe "OpenWeatherMap::ResponseParserTest" do
       end
 
       it "parses correctly" do
-        expected_result = {"2024-04-08" => {:day_name => "Today", :fahrenheit => {:temp_min => 52, :temp_max => 67}, :celsius => {:temp_min => 11.11, :temp_max => 19.44}}, "2024-04-09" => {:day_name => "Tuesday", :fahrenheit => {:temp_min => 58, :temp_max => 73}, :celsius => {:temp_min => 14.44, :temp_max => 22.78}}, "2024-04-10" => {:day_name => "Wednesday", :fahrenheit => {:temp_min => 60, :temp_max => 74}, :celsius => {:temp_min => 15.56, :temp_max => 23.33}}, "2024-04-11" => {:day_name => "Thursday", :fahrenheit => {:temp_min => 62, :temp_max => 75}, :celsius => {:temp_min => 16.67, :temp_max => 23.89}}, "2024-04-12" => {:day_name => "Friday", :fahrenheit => {:temp_min => 59, :temp_max => 73}, :celsius => {:temp_min => 15.0, :temp_max => 22.78}}, "2024-04-13" => {:day_name => "Saturday", :fahrenheit => {:temp_min => 59, :temp_max => 62}, :celsius => {:temp_min => 15.0, :temp_max => 16.67}}}
+        expected_result = { "2024-04-08" => { :day_name => "Today", :fahrenheit => { :temp_min => 52, :temp_max => 67 }, :celsius => { :temp_min => 11, :temp_max => 19 } }, "2024-04-09" => { :day_name => "Tuesday", :fahrenheit => { :temp_min => 58, :temp_max => 73 }, :celsius => { :temp_min => 14, :temp_max => 23 } }, "2024-04-10" => { :day_name => "Wednesday", :fahrenheit => { :temp_min => 60, :temp_max => 74 }, :celsius => { :temp_min => 16, :temp_max => 23 } }, "2024-04-11" => { :day_name => "Thursday", :fahrenheit => { :temp_min => 62, :temp_max => 75 }, :celsius => { :temp_min => 17, :temp_max => 24 } }, "2024-04-12" => { :day_name => "Friday", :fahrenheit => { :temp_min => 59, :temp_max => 73 }, :celsius => { :temp_min => 15, :temp_max => 23 } }, "2024-04-13" => { :day_name => "Saturday", :fahrenheit => { :temp_min => 59, :temp_max => 62 }, :celsius => { :temp_min => 15, :temp_max => 17 } } }
 
         parsed_result = OpenWeatherMap::ResponseParser.parse_forecast_response_data(@raw_response)
         assert_equal(expected_result, parsed_result)
