@@ -43,7 +43,10 @@
   - fastest for small data sets
 
 #### Future Work
+- front-end tests
+  - had issues setting up `jest`, need to explore modern approaches
 - logging
+  - at the very least, log when requests to open weather api fail for any reason
 - turn weather responses into Ruby objects, i.e. `class Day` for forecast day, which would make data validation easier/clearer
   - makes more specific unit testing easier
 - make `OpenWeatherMap::API, ...` methods have input validation
