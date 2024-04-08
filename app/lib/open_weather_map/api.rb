@@ -3,8 +3,9 @@ require_relative "util"
 
 module OpenWeatherMap
   class API
+    API_KEY = Rails.application.credentials[:open_weather_map_api_key]
     BASE_URL = "https://api.openweathermap.org".freeze
-    WEATHER_DATA_EXPIRATION = 5.seconds.freeze
+    WEATHER_DATA_EXPIRATION = 30.minutes.freeze
     GEOCODE_DATA_EXPIRATION = 1.month.freeze
 
     GENERIC_ERROR_MESSAGE = "There's been an unexpected error. Please try again later.".freeze
@@ -38,19 +39,19 @@ module OpenWeatherMap
           }
 
           # current weather request
-          response = @conn.get("data/2.5/weather") do |request|
+          weather_response = @conn.get("data/2.5/weather") do |request|
             request.params = params.merge(request.params)
           end
 
-          current_weather_data = OpenWeatherMap::ResponseParser.parse_current_weather_response_data(response.body)
-          location_name = response.body["name"]
+          current_weather_data = OpenWeatherMap::ResponseParser.parse_current_weather_response_data(weather_response.body)
+          location_name = weather_response.body["name"]
 
           # forecast request
-          response = @conn.get("data/2.5/forecast") do |request|
+          forecast_response = @conn.get("data/2.5/forecast") do |request|
             request.params = params.merge(request.params)
           end
 
-          forecast_data = OpenWeatherMap::ResponseParser.parse_forecast_response_data(response.body)
+          forecast_data = OpenWeatherMap::ResponseParser.parse_forecast_response_data(forecast_response.body)
 
           data_to_cache = {
             data: {
@@ -63,16 +64,16 @@ module OpenWeatherMap
           Rails.cache.write(postal_code, data_to_cache, expires_in: WEATHER_DATA_EXPIRATION)
 
           data_to_cache.merge({metadata: {cached: false}})
-        rescue Faraday::UnauthorizedError => e
+        rescue Faraday::UnauthorizedError
           # log server config error
           {error: GENERIC_ERROR_MESSAGE}
-        rescue Faraday::BadRequestError => e
+        rescue Faraday::BadRequestError
           {error: BAD_ADDRESS_ERROR_MESSAGE}
-        rescue Faraday::ResourceNotFound => e
+        rescue Faraday::ResourceNotFound
           {error: BAD_ADDRESS_ERROR_MESSAGE}
-        rescue Faraday::TooManyRequestsError => e
+        rescue Faraday::TooManyRequestsError
           {error: GENERIC_ERROR_MESSAGE}
-        rescue Faraday::ServerError => e
+        rescue Faraday::ServerError
           {error: GENERIC_ERROR_MESSAGE}
         end
       end
@@ -99,7 +100,7 @@ module OpenWeatherMap
           Rails.cache.write(cache_key, data_to_cache, expires_in: GEOCODE_DATA_EXPIRATION)
 
           data_to_cache
-        rescue Exception => e
+        rescue StandardError
           raise
         end
       end
