@@ -12,7 +12,8 @@ class WeatherController < ApplicationController
       # (?!.*\b\d{5}\b): Negative lookahead assertion to ensure that there are no more occurrences of a ZIP code pattern (\b\d{5}\b) ahead in the string.
       five_digit_postal_code_regex = /\b(\d{5})\b(?!.*\b\d{5}\b)/
 
-      five_digit_postal_code_regex.match(params[:q])[0]
+      matched_code = five_digit_postal_code_regex.match(params[:q])
+      matched_code.present? ? matched_code[0] : nil
     end
 
     if postal_code.present?
@@ -20,7 +21,7 @@ class WeatherController < ApplicationController
 
       render json: weather_data
     else
-      render json: {errors: ["something messed up"]}
+      render json: {error: OpenWeatherMap::API::GENERIC_ERROR_MESSAGE}
     end
   end
 end
