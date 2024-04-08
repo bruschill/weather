@@ -15,6 +15,13 @@ describe "OpenWeatherMap::APITest" do
           assert_equal(data, successful_response)
         end
       end
+
+      it "handles subsequent requests" do
+        VCR.use_cassette("successful_subsequent_weather_requests") do
+          @owm.weather(50322)
+          @owm.weather(95014)
+        end
+      end
     end
 
     describe "when request for current weather fails" do
