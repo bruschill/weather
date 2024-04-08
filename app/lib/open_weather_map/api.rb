@@ -92,10 +92,11 @@ module OpenWeatherMap
           end
 
           data = response.body
+          data_to_cache = { lat: data["lat"], lon: data["lon"] }
           cache_key = "#{postal_code}/geocode"
-          Rails.cache.write(cache_key, data, expires_in: GEOCODE_DATA_EXPIRATION)
+          Rails.cache.write(cache_key, data_to_cache, expires_in: GEOCODE_DATA_EXPIRATION)
 
-          {lat: data["lat"], lon: data["lon"]}
+          data_to_cache
         rescue Exception => e
           raise
         end
