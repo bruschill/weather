@@ -37,8 +37,8 @@ export const AddressInput = () => {
 
       fetch(`/weather?q=${address}`, requestOptions)
         .then((response) => response.json())
-        .then(({ data }) => {
-          setState(data)
+        .then(({ data, metadata }) => {
+          setState({data, metadata})
 
           setLoadingState({ loading: false, loaded: true })
         })

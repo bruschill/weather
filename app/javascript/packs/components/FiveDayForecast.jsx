@@ -7,7 +7,7 @@ import { Header } from './Header'
 
 export const FiveDayForecast = ({ unit }) => {
   const [state] = useAppState()
-  const forecastData = state.forecast
+  const forecastData = state.data.forecast
 
   return (
     <>

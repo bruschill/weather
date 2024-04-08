@@ -7,14 +7,18 @@ import { Header } from './Header'
 
 export const CurrentWeather = ({ unit }) => {
   const [state] = useAppState()
-  const currentData = state.current
+  const currentData = state.data.current
+  const currentMetadata = state.metadata
   const locationName = state.location
-  const currentConditions = currentData.current_conditions
+  const currentConditions = state.data.current.current_conditions
   const temperatureData = unit === 'f' ? currentData.temperature.fahrenheit : currentData.temperature.celsius
+  const cachedData = currentMetadata.cached
 
   return (
     <>
-      <Header text="My Location"/>
+      <span>
+        <Header text={`My Location${cachedData ? '*' : ''}`}/>
+      </span>
       <div className="location-name">
         {locationName}
       </div>

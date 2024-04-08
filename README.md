@@ -35,7 +35,13 @@
 - at minimum, user must provide a 5-digit postal code
 - app will be run in production, but there are no environments for it yet
 
+### Implementation details
+- if fetched data is was retrieved from cache, an * will appear next to the 'My Location' header text
+- temperature units toggleable (see Bugs section)
+
 ### Decisions
+- Rails 6
+  - the job description mentioned using Rails 5/6
 - Redis - chosen because out of the box, it has:
   - write data to flat file on failure/shut down
   - read data from flat file on boot
@@ -54,4 +60,7 @@
 
 ### Bugs
 - loading spinner isn't displaying w/ state change
+- entering a valid postal code, having the response render, toggling the unit toggle, then attempting to enter a new postal code results in blank screen
+  - this is due state (from AppState.jsx) getting lost
+  - front-end tests would have greatly prevented the lost time spent debugging this
 - entering a valid postal code, having the response render, then entering text that is not a valid postal code displays error while still displaying original request's weather
