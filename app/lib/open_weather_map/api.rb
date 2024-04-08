@@ -81,7 +81,6 @@ module OpenWeatherMap
     # @param [Integer] postal_code
     # @return [Hash]
     def weather(postal_code)
-
       cached_data = Rails.cache.read(postal_code)
 
       if cached_data.present?
