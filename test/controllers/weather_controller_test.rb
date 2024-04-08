@@ -13,20 +13,26 @@ class WeatherControllerTest < ActionDispatch::IntegrationTest
 
   test "it works with just a valid postal code with extended 4 digits" do
     VCR.use_cassette("request_with_extended_postal_code") do
+      expected_response = {
+        "error" => OpenWeatherMap::API::BAD_ADDRESS_ERROR_MESSAGE
+      }
+
       get weather_path, params: { q: "50322-1234" }, as: :json
 
-      location = "Urbandale"
-      assert_equal(location, JSON.parse(response.body)["data"]["location"])
+      assert_equal(expected_response, JSON.parse(response.body))
     end
   end
 
   test "it works with just a a full address" do
     full_address = "10600 N Tantau Ave, Cupertino, CA 95014-0708"
     VCR.use_cassette("request_with_full_address") do
+      expected_response = {
+        "error" => OpenWeatherMap::API::BAD_ADDRESS_ERROR_MESSAGE
+      }
+
       get weather_path, params: { q: full_address }, as: :json
 
-      location = "Cupertino"
-      assert_equal(location, JSON.parse(response.body)["data"]["location"])
+      assert_equal(expected_response, JSON.parse(response.body))
     end
   end
 

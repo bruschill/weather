@@ -2,29 +2,14 @@ class WeatherController < ApplicationController
   def show
     owm = OpenWeatherMap::API.new
 
-    # parse zip out of params[:q] to the best of my ability
-    parsed_address = StreetAddress::US.parse(params[:q])
+    postal_code = params[:q]
 
-    postal_code = if parsed_address.present?
-      parsed_address.postal_code
-    else
-      # \b(\d{5})\b: Matches a ZIP code consisting of five digits with word boundaries.
-      # (?!.*\b\d{5}\b): Negative lookahead assertion to ensure that there are no more occurrences of a ZIP code pattern (\b\d{5}\b) ahead in the string.
-      five_digit_postal_code_regex = /\b(\d{5})\b(?!.*\b\d{5}\b)/
-
-      matched_code = five_digit_postal_code_regex.match(params[:q]).to_a
-
-      # a clever/hacky way to handle if there is no match
-      # nil.to_i translates to 0 and is sent as postal code
-      matched_code[0].to_i
-    end
-
-    if postal_code.present?
+    if postal_code.present? && postal_code.length === 5
       weather_data = owm.weather(postal_code)
 
       render json: weather_data
     else
-      render json: {error: OpenWeatherMap::API::GENERIC_ERROR_MESSAGE}
+      render json: {error: OpenWeatherMap::API::BAD_ADDRESS_ERROR_MESSAGE}, status: 400
     end
   end
 end

@@ -8,7 +8,7 @@ module OpenWeatherMap
     GEOCODE_DATA_EXPIRATION = 1.month.freeze
 
     GENERIC_ERROR_MESSAGE = "There's been an unexpected error. Please try again later.".freeze
-    BAD_ADDRESS_ERROR_MESSAGE = "Error getting weather for address. Please provide as much information as you can, and make sure address is in the US.".freeze
+    BAD_ADDRESS_ERROR_MESSAGE = "Error getting weather for address. Please provide as an address that includes a postal code.".freeze
 
     def initialize
       default_request_params = {

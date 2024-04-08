@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
+import { ErrorMessage } from '@hookform/error-message'
 
-import { useAppState } from './context_providers/AppState'
+import { INITIAL_APP_STATE, useAppState } from './context_providers/AppState'
 import { useLoadingState } from './context_providers/LoadingState'
 
 import { UnitToggle } from './UnitToggle'
@@ -13,13 +14,15 @@ export const AddressInput = () => {
   const [unitState, setUnitState] = useUnitState()
   const [address, setAddress] = useState(null)
   const {
+    clearErrors,
     handleSubmit,
     formState: { errors },
     register,
     reset
   } = useForm({
     defaultValues: address,
-    mode: 'onSubmit'
+    mode: "onSubmit",
+    reValidateMode: "onSubmit",
   })
 
   useEffect(() => {
@@ -35,7 +38,6 @@ export const AddressInput = () => {
       fetch(`/weather?q=${address}`, requestOptions)
         .then((response) => response.json())
         .then(({ data }) => {
-          // this is the data blob we end up using to render content via context state in CurrentWeather, FiveDayForecast
           setState(data)
 
           setLoadingState({ loading: false, loaded: true })
@@ -59,17 +61,33 @@ export const AddressInput = () => {
     }
   }
 
+  const addressInputOnClick = (e) => {
+    e.target.value = ''
+    setState(INITIAL_APP_STATE)
+    clearErrors('q')
+  }
+
   return (
     <div>
       <form onSubmit={handleSubmit(onSubmit)}>
         <input
-          {...register('q')}
+          {...register('q', {
+            pattern: {
+              value: /\b(\d{5})\b(?!.*\b\d{5}\b)/,
+              message: 'Please try again with an address that has a postal code'
+            }
+          })}
           type="text"
           id="q"
           name="q"
-          placeholder="Enter your address"
+          placeholder="Enter your address, making sure to include at least the postal code"
+          onClick={addressInputOnClick}
         />
         <UnitToggle onChange={handleUnitChange} value={unitState}/>
+        <input type="submit"/>
+        <div>
+          <ErrorMessage errors={errors} name="q"/>
+        </div>
       </form>
     </div>
   )
