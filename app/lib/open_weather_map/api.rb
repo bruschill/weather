@@ -80,7 +80,7 @@ module OpenWeatherMap
       cached_data = Rails.cache.read("#{postal_code}/geocode")
 
       if cached_data
-        [cached_data["lat"], cached_data["lon"]]
+        {lat: cached_data[:lat], lon: cached_data[:lon]}
       else
         params = {
           zip: "#{postal_code},US"
