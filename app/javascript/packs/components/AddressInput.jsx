@@ -84,7 +84,6 @@ export const AddressInput = () => {
           onClick={addressInputOnClick}
         />
         <UnitToggle onChange={handleUnitChange} value={unitState}/>
-        <input type="submit"/>
         <div>
           <ErrorMessage errors={errors} name="q"/>
         </div>
