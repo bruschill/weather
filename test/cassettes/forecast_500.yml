@@ -1,0 +1,89 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api.openweathermap.org/geo/1.0/zip?appid=b88ab65e7d5a23cc8d7dfcd288440fe5&units=imperial&zip=50322%2CUS
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v2.9.0
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      server:
+      - openresty
+      date:
+      - Mon, 08 Apr 2024 00:06:07 GMT
+      content-type:
+      - application/json; charset=utf-8
+      content-length:
+      - '77'
+      connection:
+      - keep-alive
+      x-cache-key:
+      - "/geo/1.0/zip?units=imperial&zip=50322%2cus"
+      access-control-allow-origin:
+      - "*"
+      access-control-allow-credentials:
+      - 'true'
+      access-control-allow-methods:
+      - GET, POST
+    body:
+      encoding: UTF-8
+      string: '{"zip":"50322","name":"Urbandale","lat":41.6295,"lon":-93.723,"country":"US"}'
+  recorded_at: Mon, 08 Apr 2024 00:06:07 GMT
+- request:
+    method: get
+    uri: https://api.openweathermap.org/data/2.5/weather?appid=b88ab65e7d5a23cc8d7dfcd288440fe5&lat=41.6295&lon=-93.723&units=imperial
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v2.9.0
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      server:
+      - openresty
+      date:
+      - Mon, 08 Apr 2024 00:06:07 GMT
+      content-type:
+      - application/json; charset=utf-8
+      content-length:
+      - '478'
+      connection:
+      - keep-alive
+      x-cache-key:
+      - "/data/2.5/weather?lat=41.63&lon=-93.72&units=imperial"
+      access-control-allow-origin:
+      - "*"
+      access-control-allow-credentials:
+      - 'true'
+      access-control-allow-methods:
+      - GET, POST
+    body:
+      encoding: UTF-8
+      string: '{"coord":{"lon":-93.723,"lat":41.6295},"weather":[{"id":804,"main":"Clouds","description":"overcast
+        clouds","icon":"04d"}],"base":"stations","main":{"temp":62.26,"feels_like":60.26,"temp_min":60.87,"temp_max":62.96,"pressure":1001,"humidity":44},"visibility":10000,"wind":{"speed":16.11,"deg":210},"clouds":{"all":100},"dt":1712534607,"sys":{"type":1,"id":3863,"country":"US","sunrise":1712490405,"sunset":1712537192},"timezone":-18000,"id":4879890,"name":"Urbandale","cod":200}'
+  recorded_at: Mon, 08 Apr 2024 00:06:07 GMT
+- request:
+    method: get
+    uri: https://api.openweathermap.org/data/2.5/forecast?appid=b88ab65e7d5a23cc8d7dfcd288440fe5&lat=41.6295&lon=-93.723&units=imperial
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v2.9.0
+  response:
+    status:
+      code: 500
+  recorded_at: Mon, 08 Apr 2024 00:06:08 GMT
+recorded_with: VCR 6.2.0

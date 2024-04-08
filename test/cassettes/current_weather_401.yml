@@ -1,0 +1,53 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api.openweathermap.org/geo/1.0/zip?appid=b88ab65e7d5a23cc8d7dfcd288440fe5&units=imperial&zip=50322%2CUS
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v2.9.0
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      server:
+      - openresty
+      date:
+      - Mon, 08 Apr 2024 02:34:30 GMT
+      content-type:
+      - application/json; charset=utf-8
+      content-length:
+      - '77'
+      connection:
+      - keep-alive
+      x-cache-key:
+      - "/geo/1.0/zip?units=imperial&zip=50322%2cus"
+      access-control-allow-origin:
+      - "*"
+      access-control-allow-credentials:
+      - 'true'
+      access-control-allow-methods:
+      - GET, POST
+    body:
+      encoding: UTF-8
+      string: '{"zip":"50322","name":"Urbandale","lat":41.6295,"lon":-93.723,"country":"US"}'
+  recorded_at: Mon, 08 Apr 2024 02:34:31 GMT
+- request:
+    method: get
+    uri: https://api.openweathermap.org/data/2.5/weather?appid=b88ab65e7d5a23cc8d7dfcd288440fe5&lat=41.6295&lon=-93.723&units=imperial
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v2.9.0
+  response:
+    status:
+      code: 401
+      message: Unauthorized
+  recorded_at: Mon, 08 Apr 2024 02:34:31 GMT
+recorded_with: VCR 6.2.0

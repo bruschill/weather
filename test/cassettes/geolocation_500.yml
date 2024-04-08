@@ -1,0 +1,16 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api.openweathermap.org/geo/1.0/zip?appid=b88ab65e7d5a23cc8d7dfcd288440fe5&units=imperial&zip=50322%2CUS
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v2.9.0
+  response:
+    status:
+      code: 500
+      message: Server Error
+  recorded_at: Mon, 08 Apr 2024 01:20:18 GMT

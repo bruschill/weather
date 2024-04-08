@@ -3,10 +3,12 @@ require_relative "util"
 
 module OpenWeatherMap
   class API
-    API_KEY = Rails.application.credentials[:open_weather_map_api_key]
     BASE_URL = "https://api.openweathermap.org".freeze
-    WEATHER_DATA_EXPIRATION = 5.seconds
-    GEOCODE_DATA_EXPIRATION = 1.month
+    WEATHER_DATA_EXPIRATION = 5.seconds.freeze
+    GEOCODE_DATA_EXPIRATION = 1.month.freeze
+
+    GENERIC_ERROR_MESSAGE = "There's been an unexpected error. Please try again later.".freeze
+    BAD_ADDRESS_ERROR_MESSAGE = "Error getting weather for address. Please provide as much information as you can, and make sure address is in the US.".freeze
 
     def initialize
       default_request_params = {
@@ -27,13 +29,14 @@ module OpenWeatherMap
       if cached_data.present?
         cached_data.merge({metadata: {cached: true}})
       else
-        lat, lon = geocode_by_postal_code(postal_code)
-        params = {
-          lat: lat,
-          lon: lon
-        }
-
         begin
+          location_hash = geocode_by_postal_code(postal_code)
+
+          params = {
+            lat: location_hash[:lat],
+            lon: location_hash[:lon]
+          }
+
           # current weather request
           response = @conn.get("data/2.5/weather") do |request|
             request.params = params.merge(request.params)
@@ -61,15 +64,14 @@ module OpenWeatherMap
 
           data_to_cache.merge({metadata: {cached: false}})
         rescue Faraday::UnauthorizedError => e
-          # 401, some kind of misconfiguration like wrong API key
+          # log server config error
+          {error: GENERIC_ERROR_MESSAGE}
         rescue Faraday::ResourceNotFound => e
-          # 404, most likely a non-US address
-        rescue Faraday::ClientError => e
-          if e.response_status == 429
-            # too many requests per minute
-          else
-            # site down or some other critical error we're not prepared to handle
-          end
+          {error: BAD_ADDRESS_ERROR_MESSAGE}
+        rescue Faraday::TooManyRequestsError => e
+          {error: GENERIC_ERROR_MESSAGE}
+        rescue Faraday::ServerError => e
+          {error: GENERIC_ERROR_MESSAGE}
         end
       end
     end
@@ -93,17 +95,9 @@ module OpenWeatherMap
           cache_key = "#{postal_code}/geocode"
           Rails.cache.write(cache_key, data, expires_in: GEOCODE_DATA_EXPIRATION)
 
-          [data["lat"], data["lon"]]
-        rescue Faraday::UnauthorizedError => e
-          # 401, some kind of misconfiguration like wrong API key
-        rescue Faraday::ResourceNotFound => e
-          # 404, most likely a non-US address
-        rescue Faraday::ClientError => e
-          if e.response_status == 429
-            # too many requests per minute
-          else
-            # site down or some other critical error we're not prepared to handle
-          end
+          {lat: data["lat"], lon: data["lon"]}
+        rescue Exception => e
+          raise
         end
       end
     end
