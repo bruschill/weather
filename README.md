@@ -35,9 +35,10 @@
 - at minimum, user must provide a 5-digit postal code
 - app will be run in production, but there are no environments for it yet
 
-### Implementation details
+### Features
 - if fetched data is was retrieved from cache, an * will appear next to the 'My Location' header text
 - temperature units toggleable (see Bugs section)
+- built to be similar to how iOS Weather app displays weather
 
 ### Decisions
 - Rails 6
