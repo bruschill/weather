@@ -1,15 +1,16 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 
 import { useAppState } from './context_providers/AppState'
 
 import { Header } from './Header'
 
-export const CurrentWeather = () => {
+export const CurrentWeather = ({ unit }) => {
   const [state] = useAppState()
   const currentData = state.current
   const locationName = state.location
   const currentConditions = currentData.current_conditions
-  const temperatureData = currentData.temperature.fahrenheit
+  const temperatureData = unit === 'f' ? currentData.temperature.fahrenheit : currentData.temperature.celsius
 
   return (
     <>
@@ -33,4 +34,8 @@ export const CurrentWeather = () => {
       </div>
     </>
   )
+}
+
+CurrentWeather.propTypes = {
+  unit: PropTypes.string.isRequired
 }

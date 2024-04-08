@@ -7,6 +7,9 @@
   },
   "dependencies": {
     "@babel/preset-react": "^7.24.1",
+    "@emotion/react": "^11.11.4",
+    "@emotion/styled": "^11.11.5",
+    "@mui/material": "^5.15.15",
     "@rails/actioncable": "^6.0.0",
     "@rails/ujs": "^6.0.0",
     "@rails/webpacker": "5.4.4",

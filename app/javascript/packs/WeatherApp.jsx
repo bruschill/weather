@@ -1,14 +1,15 @@
 import React from 'react'
+import { createRoot } from 'react-dom/client'
 
 import { AppProvider } from './components/context_providers/AppState'
 import { LoadingProvider } from './components/context_providers/LoadingState'
+import { UnitProvider } from './components/context_providers/UnitState'
 
 import { Header } from './components/Header'
 import { AddressInput } from './components/AddressInput'
 import { WeatherBox } from './components/WeatherBox'
 
 import './weather_app.css'
-import { createRoot } from 'react-dom/client'
 
 const WeatherApp = () => {
   return (
@@ -19,8 +20,10 @@ const WeatherApp = () => {
         <AppProvider>
           <Header/>
           <LoadingProvider>
-            <AddressInput/>
-            <WeatherBox/>
+            <UnitProvider>
+              <AddressInput/>
+              <WeatherBox/>
+            </UnitProvider>
           </LoadingProvider>
         </AppProvider>
       </div>

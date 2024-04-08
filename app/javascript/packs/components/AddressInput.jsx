@@ -4,9 +4,13 @@ import { useForm } from 'react-hook-form'
 import { useAppState } from './context_providers/AppState'
 import { useLoadingState } from './context_providers/LoadingState'
 
+import { UnitToggle } from './UnitToggle'
+import { useUnitState } from './context_providers/UnitState'
+
 export const AddressInput = () => {
-  const [_loadingState, setLoadingState] = useLoadingState()
   const [_state, setState] = useAppState()
+  const [_loadingState, setLoadingState] = useLoadingState()
+  const [unitState, setUnitState] = useUnitState()
   const [address, setAddress] = useState(null)
   const {
     handleSubmit,
@@ -45,6 +49,16 @@ export const AddressInput = () => {
     reset()
   }
 
+  const handleUnitChange = ({ target: { value } }) => {
+    if (value === 'f') {
+      value = 'c'
+      setUnitState(value)
+    } else {
+      value = 'f'
+      setUnitState(value)
+    }
+  }
+
   return (
     <div>
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -55,6 +69,7 @@ export const AddressInput = () => {
           name="q"
           placeholder="Enter your address"
         />
+        <UnitToggle onChange={handleUnitChange} value={unitState}/>
       </form>
     </div>
   )
